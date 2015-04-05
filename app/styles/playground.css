@@ -1,0 +1,13 @@
+#wrap, #about {
+  background: #FDF6E3 !important;
+}
+
+#better-code {
+  width: 100%;
+  height: 100%;
+  padding: 0; margin: 0;
+  border: none;
+  outline: none;
+  resize: none;
+  float: right;
+}
