@@ -1,7 +1,6 @@
 // Copyright 2012 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
-
 /*
 In the absence of any formal way to specify interfaces in JavaScript,
 here's a skeleton implementation of a playground transport.
@@ -35,28 +34,72 @@ here's a skeleton implementation of a playground transport.
         function outputCallback(write) {
         }
 */
+'use strict';
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function() {
+    var context = this,
+      args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) {
+        func.apply(context, args);
+      }
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) {
+      func.apply(context, args);
+    }
+  };
+}
+
+// Don't load if localStorage isn't supported
+function localStorageSupported() {
+  try {
+    return !!localStorage.getItem;
+  } catch (e) {
+    return false;
+  }
+}
 
 function HTTPTransport() {
-  'use strict';
 
   // TODO(adg): support stderr
 
   function playback(output, events) {
     var timeout;
-    output({Kind: 'start'});
+    output({
+      Kind: 'start'
+    });
+
     function next() {
       if (events.length === 0) {
-        output({Kind: 'end'});
+        output({
+          Kind: 'end'
+        });
         return;
       }
       var e = events.shift();
       if (e.Delay === 0) {
-        output({Kind: 'stdout', Body: e.Message});
+        output({
+          Kind: 'stdout',
+          Body: e.Message
+        });
         next();
         return;
       }
       timeout = setTimeout(function() {
-        output({Kind: 'stdout', Body: e.Message});
+        output({
+          Kind: 'stdout',
+          Body: e.Message
+        });
         next();
       }, e.Delay / 1000000);
     }
@@ -65,13 +108,20 @@ function HTTPTransport() {
       Stop: function() {
         clearTimeout(timeout);
       }
-    }
+    };
   }
 
   function error(output, msg) {
-    output({Kind: 'start'});
-    output({Kind: 'stderr', Body: msg});
-    output({Kind: 'end'});
+    output({
+      Kind: 'start'
+    });
+    output({
+      Kind: 'stderr',
+      Body: msg
+    });
+    output({
+      Kind: 'end'
+    });
 
     lineHighlight(msg);
   }
@@ -84,10 +134,13 @@ function HTTPTransport() {
       var playing;
       $.ajax('/compile', {
         type: 'POST',
-        data: {'version': 2, 'body': body},
+        data: {
+          'version': 2,
+          'body': body
+        },
         dataType: 'json',
         success: function(data) {
-          if (seq != cur) return;
+          if (seq !== cur) return;
           if (!data) return;
           if (playing != null) playing.Stop();
           if (data.Errors) {
@@ -102,8 +155,14 @@ function HTTPTransport() {
       });
       return {
         Kill: function() {
-          if (playing != null) playing.Stop();
-          output({Kind: 'end', Body: 'killed'});
+          if (playing !== null) {
+            playing.Stop();
+          }
+
+          output({
+            Kind: 'end',
+            Body: 'killed'
+          });
         }
       };
     }
@@ -120,18 +179,24 @@ function SocketTransport() {
 
   websocket.onclose = function() {
     console.log('websocket connection closed');
-  }
+  };
 
   websocket.onmessage = function(e) {
     var m = JSON.parse(e.data);
     var output = outputs[m.Id];
-    if (output === null)
+    if (output === null) {
       return;
+    }
     if (!started[m.Id]) {
-      output({Kind: 'start'});
+      output({
+        Kind: 'start'
+      });
       started[m.Id] = true;
     }
-    output({Kind: m.Kind, Body: m.Body});
+    output({
+      Kind: m.Kind,
+      Body: m.Body
+    });
   }
 
   function send(m) {
@@ -140,13 +205,21 @@ function SocketTransport() {
 
   return {
     Run: function(body, output, options) {
-      var thisID = id+'';
+      var thisID = id + '';
       id++;
       outputs[thisID] = output;
-      send({Id: thisID, Kind: 'run', Body: body, Options: options});
+      send({
+        Id: thisID,
+        Kind: 'run',
+        Body: body,
+        Options: options
+      });
       return {
         Kill: function() {
-          send({Id: thisID, Kind: 'kill'});
+          send({
+            Id: thisID,
+            Kind: 'kill'
+          });
         }
       };
     }
@@ -168,7 +241,7 @@ function PlaygroundOutput(el) {
 
     var m = write.Body;
     if (write.Kind == 'end')
-      m = '\nProgram exited' + (m?(': '+m):'.');
+      m = '\nProgram exited' + (m ? (': ' + m) : '.');
 
     if (m.indexOf('IMAGE:') === 0) {
       // TODO(adg): buffer all writes before creating image
@@ -197,8 +270,9 @@ function PlaygroundOutput(el) {
     span.innerHTML = m;
     el.appendChild(span);
 
-    if (needScroll)
+    if (needScroll) {
       el.scrollTop = el.scrollHeight - el.offsetHeight;
+    }
   }
 }
 
@@ -209,7 +283,7 @@ function lineHighlight(error) {
   var r = regex.exec(error);
   while (r) {
     annotations.push({
-      row: parseInt(r[1]-1),
+      row: parseInt(r[1] - 1),
       column: parseInt(r[3]),
       text: r[4],
       type: 'error'
@@ -220,6 +294,7 @@ function lineHighlight(error) {
 
   editor.getSession().setAnnotations(annotations);
 }
+
 function highlightOutput(wrappedOutput) {
   return function(write) {
     if (write.Body) lineHighlight(write.Body);
@@ -248,37 +323,49 @@ function playground(opts) {
   var running;
 
   editor.commands.addCommand({
-      name: 'run',
-      bindKey: {win: 'Ctrl-Enter',  mac: 'Command-Enter'},
-      exec: function(editor) {
-          run();
-      },
-      readOnly: true // false if this command should not apply in readOnly mode
+    name: 'run',
+    bindKey: {
+      win: 'Ctrl-Enter',
+      mac: 'Command-Enter'
+    },
+    exec: function(editor) {
+      run();
+    },
+    readOnly: true // false if this command should not apply in readOnly mode
   });
   editor.commands.addCommand({
-      name: 'fmt',
-      bindKey: {win: 'Shift-Enter',  mac: 'Shift-Enter'},
-      exec: function(editor) {
-        fmt();
-      },
-      readOnly: true // false if this command should not apply in readOnly mode
+    name: 'fmt',
+    bindKey: {
+      win: 'Shift-Enter',
+      mac: 'Shift-Enter'
+    },
+    exec: function(editor) {
+      fmt();
+    },
+    readOnly: true // false if this command should not apply in readOnly mode
   });
   editor.commands.addCommand({
-      name: 'share',
-      bindKey: {win: 'Ctrl-Shift-S',  mac: 'Command-Shift-S'},
-      exec: function(editor) {
-        share();
-      },
-      readOnly: true // false if this command should not apply in readOnly mode
+    name: 'share',
+    bindKey: {
+      win: 'Ctrl-Shift-S',
+      mac: 'Command-Shift-S'
+    },
+    exec: function(editor) {
+      share();
+    },
+    readOnly: true // false if this command should not apply in readOnly mode
   });
   editor.commands.addCommand({
-      name: 'share',
-      bindKey: {win: 'Ctrl-Shift-F',  mac: 'Command-Shift-F'},
-      exec: function(editor) {
-        share();
-        return false;
-      },
-      readOnly: true // false if this command should not apply in readOnly mode
+    name: 'share',
+    bindKey: {
+      win: 'Ctrl-Shift-F',
+      mac: 'Command-Shift-F'
+    },
+    exec: function(editor) {
+      share();
+      return false;
+    },
+    readOnly: true // false if this command should not apply in readOnly mode
   });
 
   var outdiv = $(opts.outputEl).empty();
@@ -287,16 +374,19 @@ function playground(opts) {
   function body() {
     return opts.editor.getValue();
   }
+
   function setBody(text) {
     var currPos = editor.getCursorPosition();
     editor.setValue(text);
     editor.navigateTo(currPos.row, currPos.column);
   }
+
   function origin(href) {
-    return (""+href).split("/").slice(0, 3).join("/");
+    return ("" + href).split("/").slice(0, 3).join("/");
   }
 
   var pushedEmpty = (window.location.pathname == "/");
+
   function inputChanged() {
     if (pushedEmpty) {
       return;
@@ -305,6 +395,7 @@ function playground(opts) {
     $(opts.shareURLEl).hide();
     window.history.pushState(null, "", "/");
   }
+
   function popState(e) {
     if (e === null) {
       return;
@@ -326,11 +417,13 @@ function playground(opts) {
     lineHighlight(error);
     output.empty().addClass("error").text(error);
   }
+
   function loading() {
     editor.getSession().clearAnnotations();
     if (running) running.Kill();
     output.removeClass("error").text('Waiting for remote server...');
   }
+
   function run() {
     loading();
     running = transport.Run(body(), highlightOutput(PlaygroundOutput(output[0])));
@@ -338,7 +431,9 @@ function playground(opts) {
 
   function fmt() {
     loading();
-    var data = {"body": body()};
+    var data = {
+      "body": body()
+    };
     if ($(opts.fmtImportEl).is(":checked")) {
       data["imports"] = "true";
     }
@@ -358,39 +453,102 @@ function playground(opts) {
   }
 
   function share() {
-      if (sharing) return;
-      sharing = true;
-      var sharingData = body();
-      $.ajax("/share", {
-        processData: false,
-        data: sharingData,
-        type: "POST",
-        complete: function(xhr) {
-          sharing = false;
-          if (xhr.status != 200) {
-            alert("Server error; try again.");
-            return;
-          }
-          if (opts.shareRedirect) {
-            window.location = opts.shareRedirect + xhr.responseText;
-          }
-          if (shareURL) {
-            var path = "/p/" + xhr.responseText;
-            var url = origin(window.location) + path;
-            shareURL.show().val(url).focus().select();
-
-            if (rewriteHistory) {
-              var historyData = {"code": sharingData};
-              window.history.pushState(historyData, "", path);
-              pushedEmpty = false;
-            }
-          }
+    if (sharing) return;
+    sharing = true;
+    var sharingData = body();
+    $.ajax("/share", {
+      processData: false,
+      data: sharingData,
+      type: "POST",
+      complete: function(xhr) {
+        sharing = false;
+        if (xhr.status != 200) {
+          alert("Server error; try again.");
+          return;
         }
-      });
+        if (opts.shareRedirect) {
+          window.location = opts.shareRedirect + xhr.responseText;
+        }
+        if (shareURL) {
+          var path = "/p/" + xhr.responseText;
+          var url = origin(window.location) + path;
+          shareURL.show().val(url).focus().select();
+
+          if (rewriteHistory) {
+            var historyData = {
+              "code": sharingData
+            };
+            window.history.pushState(historyData, "", path);
+            pushedEmpty = false;
+          }
+
+          resetEmptyTextareas(url);
+        }
+      }
+    });
+  }
+
+  var dirty = {};
+  var dataRestored = false;
+
+  function getId(name) {
+    return "textareas-autosave/" + (name || 'new');
+  }
+
+  // setItem wrapper to fix some localStorage issues in *le* iPad
+  // More info: http://stackoverflow.com/questions/2603682/
+  function setkey(key, val) {
+    localStorage.removeItem(key);
+    localStorage.setItem(key, val);
+  }
+
+  // Load text for the textarea if clicked and it's empty
+  function loadTextarea(name) {
+    var _id = getId(name),
+      msg = "There is a saved version for this content. Would you like to restore the saved version?",
+      should_restore;
+    // Only attempt to restore if there's saved content
+    // and we haven't restored it yet.
+    if (localStorage.getItem(_id) && !dataRestored) {
+      should_restore =
+        // Empty..
+        editor.getValue().length === 0 ||
+        // ..or different that what we have saved (request confirmation)
+        (editor.getValue() !== localStorage.getItem(_id) && confirm(msg));
+      if (should_restore) {
+        editor.setValue(localStorage.getItem(_id));
+        dataRestored = true;
+        dirty[getId(window.location.href)] = true;
+      }
     }
+  }
+
+  // Iterate over all textareas to see if they should be cleared
+  // from the DOM
+  function resetEmptyTextareas(id) {
+    var _id = getId(id),
+      is_saved = localStorage.getItem(_id),
+      is_empty = editor.getValue() ? editor.getValue().length === 0 : true,
+      is_dirty = dirty[_id];
+
+    if (is_saved && is_empty && is_dirty) {
+      localStorage.removeItem(_id);
+    }
+  }
+
+  var saveTextarea = debounce(function(event) {
+    setkey(getId(window.location.href), editor.getValue());
+    dataRestored = true;
+    dirty[getId(window.location.href)] = true;
+  }, 200);
 
   $(opts.runEl).click(run);
   $(opts.fmtEl).click(fmt);
+
+  if (opts.autosave) {
+    editor.getSession().on('change', saveTextarea);
+    loadTextarea(window.location.href);
+  }
 
   if (opts.shareEl !== null && (opts.shareURLEl !== null || opts.shareRedirect !== null)) {
     var shareURL;
@@ -399,22 +557,5 @@ function playground(opts) {
     }
     var sharing = false;
     $(opts.shareEl).click(share);
-  }
-
-  if (opts.toysEl !== null) {
-    $(opts.toysEl).bind('change', function() {
-      var toy = $(this).val();
-      $.ajax("/doc/play/"+toy, {
-        processData: false,
-        type: "GET",
-        complete: function(xhr) {
-          if (xhr.status != 200) {
-            alert("Server error; try again.");
-            return;
-          }
-          setBody(xhr.responseText);
-        }
-      });
-    });
   }
 }

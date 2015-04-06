@@ -36,6 +36,7 @@ $(function() {
     'fmtImportEl':  '#imports',
     'shareEl':      '#share',
     'shareURLEl':   '#shareURL',
+    'autosave':      true,
     'enableHistory': true
   });
 });
