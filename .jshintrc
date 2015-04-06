@@ -21,6 +21,7 @@
   "globals" : {
     "chrome": true,
     "crypto": true,
-    "ace": true
+    "ace": true,
+    "$": true
   }
 }

@@ -1,5 +1,19 @@
-#wrap, #about {
+#better-wrap, #about {
   background: #FDF6E3 !important;
+  padding: 5px;
+  margin: 0;
+
+  position: absolute;
+  top: 50px;
+  bottom: 25%;
+  left: 0;
+  right: 0;
+}
+
+#about {
+  padding-left: 55px !important;
+  padding-top: 0 !important;
+  z-index: 5 !important;
 }
 
 #better-code {

@@ -227,6 +227,8 @@ function highlightOutput(wrappedOutput) {
   }
 }
 
+var editor;
+
 // opts is an object with these keys
 //  codeEl - code editor element
 //  outputEl - program output element
@@ -240,7 +242,7 @@ function highlightOutput(wrappedOutput) {
 //  enableHistory - enable using HTML5 history API (optional)
 //  transport - playground transport to use (default is HTTPTransport)
 function playground(opts) {
-  var editor = opts.editor;
+  editor = opts.editor;
   var code = $(opts.codeEl);
   var transport = opts['transport'] || new HTTPTransport();
   var running;

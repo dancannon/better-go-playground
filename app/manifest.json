@@ -1,6 +1,6 @@
 {
   "name": "__MSG_appName__",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "manifest_version": 2,
   "description": "__MSG_appDescription__",
   "icons": {
@@ -17,7 +17,8 @@
     {
       "matches": [
         "http://play.golang.org/*",
-        "https://play.golang.org/*"
+        "https://play.golang.org/*",
+        "http://tour.golang.org//*"
       ],
       "js": [
         "bower_components/ace-min-noconflict/ace.js",
@@ -32,9 +33,7 @@
       ],
       "css": [
         "styles/playground.css"
-      ],
-      "run_at": "document_end",
-      "all_frames": false
+      ]
     }
   ]
 }
