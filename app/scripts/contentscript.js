@@ -20,6 +20,7 @@ $(function() {
   editor.setTheme('ace/theme/solarized_light');
   editor.getSession().setMode('ace/mode/golang');
   editor.setOptions({
+      fontSize: '11pt',
       enableBasicAutocompletion: true,
       enableSnippets: true,
       enableLiveAutocompletion: false
