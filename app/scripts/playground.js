@@ -131,7 +131,7 @@ function HTTPTransport() {
     Run: function(body, output, options) {
       seq++;
       var cur = seq;
-      var playing;
+      var playing = null;
       $.ajax('/compile', {
         type: 'POST',
         data: {
