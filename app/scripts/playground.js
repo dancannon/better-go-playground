@@ -325,8 +325,8 @@ function playground(opts) {
   editor.commands.addCommand({
     name: 'run',
     bindKey: {
-      win: 'Ctrl-Enter',
-      mac: 'Command-Enter'
+      win: 'Shift-Enter',
+      mac: 'Shift-Enter'
     },
     exec: function(editor) {
       run();
@@ -336,8 +336,8 @@ function playground(opts) {
   editor.commands.addCommand({
     name: 'fmt',
     bindKey: {
-      win: 'Shift-Enter',
-      mac: 'Shift-Enter'
+      win: 'Ctrl-Enter',
+      mac: 'Command-Enter'
     },
     exec: function(editor) {
       fmt();
@@ -504,21 +504,24 @@ function playground(opts) {
 
   // Load text for the textarea if clicked and it's empty
   function loadTextarea(name) {
-    var _id = getId(name),
+    var id = getId(name),
       msg = "There is a saved version for this content. Would you like to restore the saved version?",
       should_restore;
     // Only attempt to restore if there's saved content
     // and we haven't restored it yet.
-    if (localStorage.getItem(_id) && !dataRestored) {
+    if (localStorage.getItem(id) && !dataRestored) {
       should_restore =
         // Empty..
         editor.getValue().length === 0 ||
         // ..or different that what we have saved (request confirmation)
-        (editor.getValue() !== localStorage.getItem(_id) && confirm(msg));
+        (editor.getValue() !== localStorage.getItem(id) && confirm(msg));
       if (should_restore) {
-        editor.setValue(localStorage.getItem(_id));
+        editor.setValue(localStorage.getItem(id));
         dataRestored = true;
         dirty[getId(window.location.href)] = true;
+      } else {
+        // Remove saved content if user does not wish to restore
+        localStorage.removeItem(id);
       }
     }
   }
