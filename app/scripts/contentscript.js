@@ -1,11 +1,17 @@
 'use strict';
 
 $(function() {
-  chrome.extension.onClick.addListener(funct)
+  var runEl = document.getElementById('run');
+  var fmtEl = document.getElementById('fmt');
+  var shareEl = document.getElementById('share');
 
-  $('#run').unbind('click');
-  $('#fmt').unbind('click');
-  $('#shareEl').unbind('click');
+  runEl.parentNode.replaceChild(runEl.cloneNode(true), runEl);
+  fmtEl.parentNode.replaceChild(fmtEl.cloneNode(true), fmtEl);
+  shareEl.parentNode.replaceChild(shareEl.cloneNode(true), shareEl);
+
+  runEl = document.getElementById('run');
+  fmtEl = document.getElementById('fmt');
+  shareEl = document.getElementById('share');
 
   var wrapEl = $('<div id="better-wrap"></div>');
   var codeEl = $('<div id="better-code"></div>');
