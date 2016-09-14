@@ -2,7 +2,9 @@
 
 The "Better Go Playground" extension makes the Go Playground easier to use by: 
 
- - Replacing the built in with the Ace editor
+ - Golang syntax highlighting
+ - Replaces the built in with the Ace editor
  - Mark lines with syntax errors when running your code
- - Autocompletion + Snippets
- - More coming soon
+ - Auto-completion + Snippets
+ - Auto-save to local storage
+ - Dark/Light theme toggle
