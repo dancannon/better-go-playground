@@ -94,4 +94,8 @@ $(function() {
     'autosave':      true,
     'enableHistory': true
   });
+
+  document.getElementById("run").title = "Press ALT+R to run quickly.";
+  document.getElementById("fmt").title = "Press ALT+W to format quickly.";
+  document.getElementById("reset").title = "Press ALT+T to reset quickly.";
 });
