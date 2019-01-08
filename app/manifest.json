@@ -1,40 +1,62 @@
 {
   "name": "__MSG_appName__",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "manifest_version": 2,
   "description": "__MSG_appDescription__",
   "icons": {
     "16": "images/icon-16.png",
     "128": "images/icon-128.png"
   },
+  "permissions": ["activeTab"],
+  "commands": {
+    "run-code": {
+      "suggested_key": {
+        "default": "Alt+R",
+        "mac": "Alt+R"
+      },
+      "description": "Run the code"
+    },
+    "format-code": {
+      "suggested_key": {
+        "default": "Alt+W",
+        "mac": "Alt+W"
+      },
+      "description": "Format the code"
+    },    
+    "reset-code": {
+      "suggested_key": {
+        "default": "Alt+T",
+        "mac": "Alt+T"
+      },
+      "description": "Reset the code"
+    }
+  },
   "default_locale": "en",
   "background": {
     "scripts": [
-      "scripts/chromereload.js"
+      "/scripts/chromereload.js"
     ]
   },
-  "content_scripts": [
-    {
-      "matches": [
-        "http://play.golang.org/*",
-        "https://play.golang.org/*",
-        "http://tour.golang.org//*"
-      ],
-      "js": [
-        "bower_components/ace-min-noconflict/ace.js",
-        "bower_components/ace-min-noconflict/mode-golang.js",
-        "bower_components/ace-min-noconflict/theme-solarized_light.js",
-        "bower_components/ace-min-noconflict/theme-tomorrow_night.js",
-        "bower_components/ace-min-noconflict/ext-language_tools.js",
-        "bower_components/ace-min-noconflict/ext-themelist.js",
-        "bower_components/ace-min-noconflict/snippets/golang.js",
-        "bower_components/jquery/dist/jquery.js",
-        "scripts/playground.js",
-        "scripts/contentscript.js"
-      ],
-      "css": [
-        "styles/playground.css"
-      ]
-    }
-  ]
+  "content_scripts": [{
+    "matches": [
+      "http://play.golang.org/*",
+      "https://play.golang.org/*",
+      "http://tour.golang.org//*"
+    ],
+    "js": [
+      "bower_components/ace-min-noconflict/ace.js",
+      "bower_components/ace-min-noconflict/mode-golang.js",
+      "bower_components/ace-min-noconflict/theme-solarized_light.js",
+      "bower_components/ace-min-noconflict/theme-tomorrow_night.js",
+      "bower_components/ace-min-noconflict/ext-language_tools.js",
+      "bower_components/ace-min-noconflict/ext-themelist.js",
+      "bower_components/ace-min-noconflict/snippets/golang.js",
+      "bower_components/jquery/dist/jquery.js",
+      "scripts/playground.js",
+      "scripts/contentscript.js"
+    ],
+    "css": [
+      "styles/playground.css"
+    ]
+  }]
 }

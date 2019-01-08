@@ -20,3 +20,40 @@ connection.onmessage = function (e) {
     }
   }
 };
+
+chrome.commands.onCommand.addListener(function (command) {
+
+  if (command === "run-code") {
+    executeOnActiveTab(runCode);
+  }
+  if (command === "format-code") {
+    executeOnActiveTab(formatCode);
+  }
+  if (command === "reset-code") {
+    executeOnActiveTab(resetCode);
+  }
+});
+
+function runCode() {
+  document.getElementById("run").click();
+  console.log("runCode executed!");
+}
+
+function formatCode() {
+  document.getElementById("fmt").click();
+  console.log("formatCode executed!");
+}
+
+function resetCode() {
+  document.getElementById("reset").click();
+  console.log("resetCode executed!");
+}
+
+function executeOnActiveTab(method) {
+  chrome.tabs.executeScript({
+    code: '(' + method + ')();'
+  }, (results) => {
+
+    console.log("executed" + method)
+  });
+}
