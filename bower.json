@@ -1,5 +1,6 @@
 {
   "name": "better-go-playground",
+  "private": true,
   "version": "0.0.0",
   "dependencies": {
     "ace-min-noconflict": "~1.1.8",

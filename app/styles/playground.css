@@ -42,3 +42,19 @@
 #importsBox {
   margin-left: 10px;
 }
+
+#banner > select {
+  background: #375EAB;
+  border: 1px solid #375EAB;
+  font-size: 16px;
+  font-family: sans-serif;
+  color: #FFFFFF;
+}
+
+#toggleTheme {
+  margin-left: auto;
+}
+
+#aboutButton {
+  margin-left: 5px !important;
+}
