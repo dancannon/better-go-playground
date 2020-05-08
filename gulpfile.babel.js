@@ -2,7 +2,6 @@
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import del from 'del';
-import runSequence from 'run-sequence';
 import {stream as wiredep} from 'wiredep';
 
 const $ = gulpLoadPlugins();
@@ -129,13 +128,10 @@ gulp.task('package', function () {
       .pipe(gulp.dest('package'));
 });
 
-gulp.task('build', (cb) => {
-  runSequence(
-    'lint', 'babel', 'chromeManifest',
-    ['html', 'images', 'extras'],
-    'size', cb);
-});
+gulp.task('build', gulp.series(
+  'lint', 'babel', 'chromeManifest',
+  gulp.parallel('html', 'images', 'extras'),
+  'size',
+));
 
-gulp.task('default', gulp.series('clean', cb => {
-  runSequence('build', cb);
-}));
+gulp.task('default', gulp.series('clean', 'build'));
