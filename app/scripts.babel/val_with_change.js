@@ -1,8 +1,8 @@
-'use strict';
-
-// Override original $.val so that we get notified when the original playground
+'use strict'; // Override original $.val so that we get notified when the original playground
 // script modifies the textarea
+
 var originalVal = $.fn.val;
+
 $.fn.val = function () {
   var result = originalVal.apply(this, arguments);
 
