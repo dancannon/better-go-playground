@@ -18,7 +18,8 @@
       "matches": [
         "http://play.golang.org/*",
         "https://play.golang.org/*",
-        "http://tour.golang.org//*"
+        "http://tour.golang.org//*",
+        "https://go2goplay.golang.org/*"
       ],
       "js": [
         "bower_components/ace-min-noconflict/ace.js",
