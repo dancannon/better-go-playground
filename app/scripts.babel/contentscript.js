@@ -121,18 +121,18 @@ $(function () {
     localStorage.setItem('ace_theme', theme);
   }
 
-  function toggleTheme(editor) {
+  function toggleTheme(editor, themeEl) {
     if (editor.getTheme() === 'ace/theme/solarized_light') {
-      setTheme('ace/theme/tomorrow_night');
+      setTheme(editor, themeEl, 'ace/theme/tomorrow_night');
     } else {
-      setTheme('ace/theme/solarized_light');
+      setTheme(editor, themeEl, 'ace/theme/solarized_light');
     }
   }
 
   function addThemeButton(editor) {
     var bannerEl = document.getElementById('banner');
     var themeEl = $('<input type="button" value="Dark" id="toggleTheme">');
-    themeEl.click(toggleTheme);
+    themeEl.click(() =>  toggleTheme(editor, themeEl));
     var theme = localStorage.getItem('ace_theme');
 
     if (theme) {
