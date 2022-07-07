@@ -19,7 +19,8 @@
         "http://play.golang.org/*",
         "https://play.golang.org/*",
         "http://tour.golang.org//*",
-        "https://go2goplay.golang.org/*"
+        "https://go2goplay.golang.org/*",
+        "https://go.dev/play/*"
       ],
       "js": [
         "bower_components/ace-min-noconflict/ace.js",
